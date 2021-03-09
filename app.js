@@ -14,6 +14,18 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://Admin-D:<123.Probando>@secrets.rgel4.mongodb.net/userDB?retryWrites=true&w=majority";
+const client = new MongoClient(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+});
+client.connect(err => {
+    const collection = client.db("userDB").collection("users");
+    // perform actions on the collection object
+    client.close();
+});
+
 const app = express();
 
 app.use(express.static("public"));
@@ -31,22 +43,20 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-mongoose.connect("mongodb://localhost:27017/userDB", {
-    useUnifiedTopology: true,
-    useNewUrlParser: true
-});
-mongoose.set("useCreateIndex", {
-    sparse: true
-});
-
+//mongoose.connect("mongodb://localhost:27017/userDB", {
+//    useUnifiedTopology: true,
+//    useNewUrlParser: true
+//});
+//mongoose.set("useCreateIndex", {
+//    sparse: true
+//});
 
 const userSchema = new mongoose.Schema({
     email: String,
     password: String,
     googleId: String,
     facebookId: String,
-    secret: [],             //Made secret be an array to hold more than 1 if the user chooses to.
+    secret: [], //Made secret be an array to hold more than 1 if the user chooses to.
 
 });
 
@@ -162,7 +172,6 @@ app.post("/register", function (req, res) {
 
 });
 
-
 app.get("/secrets", function (req, res) {
     User.find({
         "secret": {
@@ -225,8 +234,6 @@ app.post("/login", function (req, res) {
         }
     });
 });
-
-
 
 app.get("/logout", function (req, res) {
     req.logout();
