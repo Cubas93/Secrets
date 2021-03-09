@@ -31,8 +31,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-mongoose.connect("mongodb://localhost:27017/userDB", {
+mongoose.connect("mongodb+srv://Admin-D:123.Probando@secrets.rgel4.mongodb.net/userDB?retryWrites=true&w=majority", {
     useUnifiedTopology: true,
     useNewUrlParser: true
 });
@@ -40,13 +39,12 @@ mongoose.set("useCreateIndex", {
     sparse: true
 });
 
-
 const userSchema = new mongoose.Schema({
     email: String,
     password: String,
     googleId: String,
     facebookId: String,
-    secret: [],             //Made secret be an array to hold more than 1 if the user chooses to.
+    secret: [], //Made secret be an array to hold more than 1 if the user chooses to.
 
 });
 
@@ -162,7 +160,6 @@ app.post("/register", function (req, res) {
 
 });
 
-
 app.get("/secrets", function (req, res) {
     User.find({
         "secret": {
@@ -226,13 +223,16 @@ app.post("/login", function (req, res) {
     });
 });
 
-
-
 app.get("/logout", function (req, res) {
     req.logout();
     res.redirect("/");
 });
 
-app.listen(3000, function () {
-    console.log("Server on 3000");
+
+let port = process.env.PORT;
+if (port == null || port==""){
+    port = 8000;
+}
+app.listen(port, function(){
+    console.log("Server started on port: " + port);
 });
